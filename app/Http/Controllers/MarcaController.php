@@ -31,13 +31,24 @@ class MarcaController extends Controller
     public function show($id)
     {
         $marca = $this->marca->find($id);
+
+        if ($marca === null) {
+            return ['success' => false];
+        }
+
         return $marca;
     }
 
     public function update(Request $request, $id)
     {
         //$marca->update($request->all());
+        
         $marca = $this->marca->find($id);
+
+        if ($marca === null) {
+            return ['success' => false];
+        }
+
         $marca->update($request->all());
         return $marca;
     }
@@ -45,6 +56,11 @@ class MarcaController extends Controller
     public function destroy($id)
     {
         $marca = $this->marca->find($id);
+
+        if ($marca === null) {
+            return ['success' => false];
+        }
+
         $marca->delete();
         return ['success' => true];
     }
