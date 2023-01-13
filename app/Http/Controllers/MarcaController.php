@@ -18,14 +18,14 @@ class MarcaController extends Controller
     {
         //$marcas = Marca::all();
         $marcas = $this->marca->all();
-        return $marcas;
+        return response()->json($marcas, 200);
     }
 
     public function store(Request $request)
     {
         //$marca = Marca::create($request->all());
         $marca = $this->marca->create($request->all());
-        return $marca;
+        return response()->json($marca, 201);
     }
 
     public function show($id)
@@ -33,10 +33,10 @@ class MarcaController extends Controller
         $marca = $this->marca->find($id);
 
         if ($marca === null) {
-            return ['success' => false];
+            return response()->json(['success' => false], 404);
         }
 
-        return $marca;
+        return response()->json($marca, 200);
     }
 
     public function update(Request $request, $id)
@@ -46,11 +46,11 @@ class MarcaController extends Controller
         $marca = $this->marca->find($id);
 
         if ($marca === null) {
-            return ['success' => false];
+            return response()->json(['success' => false], 404);
         }
 
         $marca->update($request->all());
-        return $marca;
+        return response()->json($marca, 200);
     }
 
     public function destroy($id)
@@ -58,10 +58,10 @@ class MarcaController extends Controller
         $marca = $this->marca->find($id);
 
         if ($marca === null) {
-            return ['success' => false];
+            return response()->json(['success' => false], 404);
         }
 
         $marca->delete();
-        return ['success' => true];
+        return response()->json(['success' => true], 200);
     }
 }
