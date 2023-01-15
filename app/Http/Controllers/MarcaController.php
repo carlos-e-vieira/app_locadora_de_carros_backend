@@ -51,7 +51,23 @@ class MarcaController extends Controller
             return response()->json(['success' => false], 404);
         }
 
-        $request->validate($this->marca->rules(), $this->marca->feedback());
+        if ($request->method() === 'PATCH') {
+            $dinamicsRules = array();
+
+            foreach ($marca->rules() as $input => $rule) {
+
+                if (array_key_exists($input, $request->all())) {
+                    $dinamicsRules[$input] = $rule;
+                }
+
+            }
+            $request->validate($dinamicsRules, $this->marca->feedback());
+        }
+
+        if ($request->method() === 'PUT') {
+            $request->validate($this->marca->rules(), $this->marca->feedback());
+        }
+
         $marca->update($request->all());
         return response()->json($marca, 200);
     }
