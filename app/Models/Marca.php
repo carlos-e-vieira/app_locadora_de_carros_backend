@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 class Marca extends Model
 {
@@ -14,7 +15,8 @@ class Marca extends Model
     public function rules(): array
     {
         return [
-            'nome' => 'required|unique:marcas|min:3',
+            //'nome' => 'required|unique:marcas,nome,'.$this->id.'|min:3',
+            'nome' => 'required|', Rule::unique('marcas')->ignore($this->id, 'id') ,
             'imagem' => 'required'
         ];
     }
