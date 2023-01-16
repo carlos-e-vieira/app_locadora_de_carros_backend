@@ -75,8 +75,16 @@ class MarcaController extends Controller
         if ($request->method() === 'PUT') {
             $request->validate($this->marca->rules(), $this->marca->feedback());
         }
+        
+        $image = $request->file('imagem');
+        $imageEndpoint = $image->store('imagens', 'public');
 
-        $marca->update($request->all());
+        $marca->update(
+            [
+                'nome' => $request->nome,
+                'imagem' => $imageEndpoint
+            ]
+        );
         return response()->json($marca, 200);
     }
 
