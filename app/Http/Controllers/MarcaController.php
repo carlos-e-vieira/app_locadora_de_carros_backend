@@ -26,7 +26,16 @@ class MarcaController extends Controller
         //$marca = Marca::create($request->all());
         $request->validate($this->marca->rules(), $this->marca->feedback());
 
-        $marca = $this->marca->create($request->all());
+        $image = $request->file('imagem');
+        $imageEndpoint = $image->store('imagens', 'public');
+
+        $marca = $this->marca->create(
+            [
+                'nome' => $request->nome,
+                'imagem' => $imageEndpoint
+            ]
+        );
+
         return response()->json($marca, 201);
     }
 
@@ -44,7 +53,6 @@ class MarcaController extends Controller
     public function update(Request $request, $id)
     {
         //$marca->update($request->all());
-        
         $marca = $this->marca->find($id);
 
         if ($marca === null) {
