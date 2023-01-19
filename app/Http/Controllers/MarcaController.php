@@ -86,12 +86,11 @@ class MarcaController extends Controller
         $image = $request->file('imagem');
         $imageEndpoint = $image->store('imagens', 'public');
 
-        $marca->update(
-            [
-                'nome' => $request->nome,
-                'imagem' => $imageEndpoint
-            ]
-        );
+        // Preencher objeto $marca com os dados da request
+        $marca->fill($request->all());
+        $marca->imagem = $imageEndpoint;
+        $marca->save();
+
         return response()->json($marca, 200);
     }
 
