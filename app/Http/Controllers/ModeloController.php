@@ -15,10 +15,20 @@ class ModeloController extends Controller
         $this->modelo = $modelo;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $modelos = array();
+
+        if ($request->has('atributos')) {
+            $atributos = $request->atributos;
+            $modelos = $this->modelo->selectRaw($atributos)->with('marca')->get();
+        } else {
+            $modelos = $this->modelo->with('marca')->get();
+        }
+
         // adicionando o relacionamento - um modelo tem uma marca
-        return response()->json($this->modelo->with('marca')->get(), 200);
+        //$this->modelo->with('marca')->get()
+        return response()->json($modelos, 200);
     }
 
     public function store(Request $request)
