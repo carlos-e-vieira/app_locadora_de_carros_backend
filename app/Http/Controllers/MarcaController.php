@@ -17,8 +17,8 @@ class MarcaController extends Controller
 
     public function index()
     {
-        //$marcas = Marca::all();
-        $marcas = $this->marca->all();
+        // adicionando o relacionamento - uma marca tem muito modelos
+        $marcas = $this->marca->with('modelos')->get();
         return response()->json($marcas, 200);
     }
 
@@ -42,7 +42,8 @@ class MarcaController extends Controller
 
     public function show($id)
     {
-        $marca = $this->marca->find($id);
+        // adicionando o relacionamento - uma marca tem muito modelos
+        $marca = $this->marca->with('modelos')->find($id);
 
         if ($marca === null) {
             return response()->json(['success' => false], 404);

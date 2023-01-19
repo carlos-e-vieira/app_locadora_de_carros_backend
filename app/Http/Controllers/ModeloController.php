@@ -17,7 +17,8 @@ class ModeloController extends Controller
 
     public function index()
     {
-        return response()->json($this->modelo->all(), 200);
+        // adicionando o relacionamento - um modelo tem uma marca
+        return response()->json($this->modelo->with('marca')->get(), 200);
     }
 
     public function store(Request $request)
@@ -42,7 +43,8 @@ class ModeloController extends Controller
 
     public function show($id)
     {
-        $modelo = $this->modelo->find($id);
+        // adicionando o relacionamento - um modelo tem uma marca
+        $modelo = $this->modelo->with('marca')->find($id);
 
         if ($modelo === null) {
             return response()->json(['success' => false], 404);
