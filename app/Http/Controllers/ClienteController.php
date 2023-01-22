@@ -3,63 +3,99 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
-use App\Http\Requests\StoreClienteRequest;
-use App\Http\Requests\UpdateClienteRequest;
+use Illuminate\Http\Request;
+use App\Repositories\ClienteRepository;
 
 class ClienteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    private Cliente $cliente;
+
+    public function __construct(Cliente $cliente)
     {
-        //
+        $this->cliente = $cliente;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreClienteRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreClienteRequest $request)
+    public function index(Request $request)
     {
-        //
+        $clienteRepository = new ClienteRepository($this->cliente);
+
+        // condição de busca com filtro
+        if ($request->has('filtro')) {
+            $clienteRepository->filtro($request->filtro);
+        }
+
+        // condição de busca por atributos do marca
+        if ($request->has('atributos')) {
+            $clienteRepository->selectAtributos($request->atributos);
+        }
+
+        return response()->json($clienteRepository->getResultado(), 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Cliente  $cliente
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Cliente $cliente)
+    public function store(Request $request)
     {
-        //
+        $request->validate($this->cliente->rules(), $this->cliente->feedback());
+        $carro = $this->cliente->create(
+            [
+                'nome' => $request->nome
+            ]
+        );
+
+        return response()->json($carro, 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateClienteRequest  $request
-     * @param  \App\Models\Cliente  $cliente
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateClienteRequest $request, Cliente $cliente)
+    public function show($id)
     {
-        //
+        $cliente = $this->cliente->find($id);
+
+        if ($cliente === null) {
+            return response()->json(['success' => false], 404);
+        }
+
+        return response()->json($cliente, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Cliente  $cliente
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Cliente $cliente)
+    public function update(Request $request, $id)
     {
-        //
+        $cliente = $this->cliente->find($id);
+
+        if ($cliente === null) {
+            return response()->json(['success' => false], 404);
+        }
+
+        if ($request->method() === 'PATCH') {
+            $dinamicsRules = array();
+
+            foreach ($cliente->rules() as $input => $rule) {
+
+                if (array_key_exists($input, $request->all())) {
+                    $dinamicsRules[$input] = $rule;
+                }
+
+            }
+            $request->validate($dinamicsRules, $this->cliente->feedback());
+        }
+
+        if ($request->method() === 'PUT') {
+            $request->validate($this->cliente->rules(), $this->cliente->feedback());
+        }
+
+        // Preencher objeto carro com os dados da request
+        $cliente->fill($request->all());
+        $cliente->save();
+
+        return response()->json($cliente, 200);
+    }
+
+    public function destroy($id)
+    {
+        $cliente = $this->cliente->find($id);
+
+        if ($cliente === null) {
+            return response()->json(['success' => false], 404);
+        }
+
+        $cliente->delete();
+        return response()->json(['success' => true], 200);
     }
 }
