@@ -24,12 +24,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::resource('cliente', ClienteController::class);
-Route::apiResource('cliente', ClienteController::class);
-Route::apiResource('carro', CarroController::class);
-Route::apiResource('locacao', LocacaoController::class);
-Route::apiResource('marca', MarcaController::class);
-Route::apiResource('modelo', ModeloController::class);
+Route::apiResource('cliente', ClienteController::class)->middleware('jwt.auth');
+Route::apiResource('carro', CarroController::class)->middleware('jwt.auth');
+Route::apiResource('locacao', LocacaoController::class)->middleware('jwt.auth');
+Route::apiResource('marca', MarcaController::class)->middleware('jwt.auth');
+Route::apiResource('modelo', ModeloController::class)->middleware('jwt.auth');
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
