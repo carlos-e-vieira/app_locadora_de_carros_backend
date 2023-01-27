@@ -25,7 +25,9 @@ class AuthController extends Controller
 
     public function logout()
     {
-        return 'Logout';
+        // faz o logout e colocar o token em uma black list, impossibilitando autorização com o token gerado antes do logout
+        auth('api')->logout();
+        return response()->json(['logout' => true]);
     }
 
     public function refresh()
