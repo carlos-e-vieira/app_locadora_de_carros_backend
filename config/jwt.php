@@ -89,6 +89,7 @@ return [
     |
     */
 
+    // tempo de vida do token
     'ttl' => env('JWT_TTL', 60),
 
     /*
